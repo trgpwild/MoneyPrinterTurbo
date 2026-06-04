@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moneyprinterturbo-webui
+    ports:
+      - "8501:8501"
+    command: ["streamlit", "run", "./webui/Main.py", "--browser.serverAddress=0.0.0.0", "--server.enableCORS=True", "--browser.gatherUsageStats=False"]
+    volumes:
+      - ./:/MoneyPrinterTurbo
+    restart: unless-stopped
+    # optional: expose the UI on the network (remove if not needed)
+    # environment:
+    #   - MPT_WEBUI_HOST=0.0.0.0
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moneyprinterturbo-api
+    ports:
+      - "8080:8080"
+    command: ["python", "main.py"]
+    volumes:
+      - ./:/MoneyPrinterTurbo
+    restart: unless-stopped
+
+# Shared volume definition (optional, can be removed if you prefer direct bind-mounts above)
+#volumes:
+#  common:
+#    driver: local
